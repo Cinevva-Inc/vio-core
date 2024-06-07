@@ -41,7 +41,7 @@ export class LightComponent extends VioComponent
             depthWrite: false,
             sizeAttenuation: true,
             transparent: true,
-            map: new THREE.TextureLoader().load('./assets/tools/editor/icons/light.png')
+            map: new THREE.TextureLoader().load('./light.png')
         })
         material.color = this._color;
 

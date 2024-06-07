@@ -38,7 +38,7 @@ export class ClickableComponent extends VioComponent implements IvioInteractable
     set interactable(interactable: boolean) {
         if (this.object && this.interactable)
             VioRaycast.removeInteractableObject(this);
-        this.interactable = interactable
+        this._interactable = interactable
         if (this.object && this.interactable)
             VioRaycast.addInteractableObject(this);
     }

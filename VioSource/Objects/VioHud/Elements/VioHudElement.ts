@@ -214,6 +214,7 @@ export class VioHudElement {
     }
 
     public set data(data: any) {
+        console.log({data})
         for (let prop in data)
             if (prop != 'type' && prop != 'children')
                 (this as any)[prop] = data[prop]

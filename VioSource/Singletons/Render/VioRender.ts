@@ -61,7 +61,7 @@ export class VioRender
         this._clock         = new Clock();
         this._clearColor    = new Color();
         this._rendererPass  = new RenderPass( this._rootScene, this._camera.selectedCamera );
-        this._perfomance    = { delta:0, fps:0, times:[] };
+        // this._perfomance    = { delta:0, fps:0, times:[] };
 
         this._screenSize    = { width:0, height:0, dpi:1};
 
@@ -128,62 +128,85 @@ export class VioRender
         this._perfomance.delta = this._clock.getDelta();
     }*/
 
-    private _render(inAnimationLoop:boolean = false)
-    {
-
+    private _render(inAnimationLoop: boolean = false) {
+        if (this._scene && this._camera) {
+            this.render2(this._clock.getDelta())
+        }
         // this._frameID = requestAnimationFrame( this._render.bind(this) );
 
-        if(this._scene && this._camera)
-        {
+        // if(this._scene && this._camera)
+        // {
+            // let delta = this._clock.getDelta();
+            // this._perfomance.delta = delta;
+            // this._scene.update(delta);
+            // if(!VioEditMode.enabled) {
+            //     this._camera.update(delta);
+            //     VioScenarios.update(delta);
+            // }
+            // if(this._onUpdate) {
+            //     this._onUpdate(delta);
+            // }
+            // this._renderer!.info.reset()
+            // if(this._composer!.passes.length>0)
+            //     this._composer!.render(this._perfomance.delta);
+            // else
+            //     this._renderer!.render( this._rootScene, this._camera.selectedCamera );
+
+            // if(!VioEditMode.enabled)
+            // {
+            //     VioInput.update();
+            // }
+
             // this._updatePerfomance(timeStamp);
-            this._elapsed += this._clock.getDelta();
+            
+            // this._elapsed += this._clock.getDelta();
 
-            let framesPassed = Math.round(this._elapsed / this._interval)
-            // console.log({framesPassed, inAnimationLoop})
-            if (!inAnimationLoop || framesPassed > 0) {
+            // let framesPassed = Math.round(this._elapsed / this._interval)
+            // // console.log({framesPassed, inAnimationLoop})
+            // if (!inAnimationLoop || framesPassed > 0) {
 
-                let delta = framesPassed * this._interval
-                this._elapsed -= delta
+            //     let delta = framesPassed * this._interval
+            //     this._elapsed -= delta
 
-                if (delta > this._interval * 2)
-                    delta = this._interval * 2
+            //     if (delta > this._interval * 2)
+            //         delta = this._interval * 2
 
-                // if (!inAnimationLoop)
-                //     delta = 0
+            //     // if (!inAnimationLoop)
+            //     //     delta = 0
 
-                this._perfomance.delta = delta
+            //     this._perfomance.delta = delta
 
 
-                if (delta > 0) {
+            //     if (delta > 0) {
         
-                    this._scene.update(this._perfomance.delta);
+            //         this._scene.update(this._perfomance.delta);
                     
-                    if(!VioEditMode.enabled) {
-                        this._camera.update(this._perfomance.delta);
-                        VioScenarios.update(this._perfomance.delta);
-                    }
+            //         if(!VioEditMode.enabled) {
+            //             this._camera.update(this._perfomance.delta);
+            //             VioScenarios.update(this._perfomance.delta);
+            //         }
                     
-                    if(this._onUpdate)
-                        this._onUpdate(this._perfomance.delta);
-                }
+            //         if(this._onUpdate)
+            //             this._onUpdate(this._perfomance.delta);
+            //     }
 
 
-                this._renderer!.info.reset()
-                if(this._composer!.passes.length>0)
-                    this._composer!.render(this._perfomance.delta);
-                else
-                    this._renderer!.render( this._rootScene, this._camera.selectedCamera );
+            //     this._renderer!.info.reset()
+            //     if(this._composer!.passes.length>0)
+            //         this._composer!.render(this._perfomance.delta);
+            //     else
+            //         this._renderer!.render( this._rootScene, this._camera.selectedCamera );
 
-                if(!VioEditMode.enabled)
-                {
-                    VioInput.update();
-                }
-            }
-        }
+            //     if(!VioEditMode.enabled)
+            //     {
+            //         VioInput.update();
+            //     }
+            // }
+        // }
     }
 
     public render2(delta:number) {
-        this._perfomance.delta = delta
+        // this._perfomance.delta = delta
         this._scene!.update(delta);
         this._camera.update(delta);
         VioScenarios.update(delta);
@@ -248,16 +271,6 @@ export class VioRender
             this.instance._elementRect = this.canvasElement.getBoundingClientRect();
         }
         return this.instance._elementRect;
-    }
-
-    public static get fps():number
-    {
-        return this.instance._perfomance.fps;
-    }
-
-    public static get delta():number
-    {
-        return this.instance._perfomance.delta;
     }
 
     public static get rootScene()
@@ -394,7 +407,7 @@ export class VioRender
             // this.instance._frameID = requestAnimationFrame( this.instance._render.bind(this.instance) );
         }
 
-        this.instance._perfomance.times.length = 0;
+        // this.instance._perfomance.times.length = 0;
 
         // this.instance._render();
     }

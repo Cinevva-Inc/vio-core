@@ -41,6 +41,33 @@ export class MeshComponent extends VioComponent
 
     get initialized()  { return this._initialized }
 
+    private _updateSkeleton(meshObj: Object3D) {
+        const params = document.location.search.replace('?','').toUpperCase().split('&');
+
+        let hasSkinnedMesh = false;
+        meshObj.traverse(obj=>
+        {
+            if(obj.type == 'SkinnedMesh')
+            {
+                hasSkinnedMesh = true;
+            }
+            if(obj.type == 'Bone')
+            {
+                // console.log("Bone",obj.name);
+                obj.name = obj.name.toLowerCase().replace(':','').replace('mixamorig','')
+            }
+        });
+
+        if(params.includes('SHOWBONES'))
+        {
+            if(hasSkinnedMesh)
+            {
+                let helper = new SkeletonHelper( meshObj );
+                VioRender.scene.add( helper );
+            }
+        }
+    }
+
     async _loadModelData() {
         let searchParams = new URLSearchParams(window.location.search)
         let textureLoader = new TextureLoader()
@@ -75,8 +102,8 @@ export class MeshComponent extends VioComponent
                             let image = props[key]
                             let url = image.url ?? image.src ?? image
                             if (typeof url == 'string' && url) {
-                                if (url.startsWith('.') || url.startsWith('/'))
-                                    url = `https://app.cinevva.com/${url.slice(1)}`
+                                // if (url.startsWith('./') || url.startsWith('/'))
+                                //     url = `https://app.cinevva.com/${url.slice(1)}`
                                 let loadTexture = async (url:string, opts:any={}) => {
                                     // console.log('loadTexture', url, opts);
                                     let texture = await new Promise<Texture>(
@@ -197,6 +224,7 @@ export class MeshComponent extends VioComponent
             this.object.add(this._model!.object);
             this.object.updateMatrixWorld(true);
             this.updateShadowProps();
+            this._updateSkeleton(this._model!.object);
         }
 
         this.object?.resetBounds()
@@ -270,30 +298,30 @@ export class MeshComponent extends VioComponent
                                 };
                                 let image = texture.source?.data
                                 // console.log('MeshComponent', {image})
-                                if (false && image) {
+                                if (image) {
                                     let url = image.url ?? image.src
                                     if (url === undefined && texture.name.startsWith('https://app.cinevva.com/uploads/')) {
                                         url = texture.name
                                     }
                                     // console.log('MeshComponent', {url})
                                     if (url !== undefined && !url.startsWith('blob:') && image.width && image.height) {
-                                        let canvas = document.createElement('canvas');
-                                        let ctx = canvas.getContext('2d');
-                                        canvas.width = 64;
-                                        canvas.height = 64;
-                                        ctx!.drawImage(image, 0, 0, 64, 64);
-                                        let lowres:string
-                                        if (key == 'alphaMap' || m1.transparent && key == 'map') {
-                                            lowres = canvas.toDataURL('image/png')
-                                        }
-                                        else {
-                                            lowres = canvas.toDataURL('image/jpeg', 0.5)
-                                        }
+                                        // let canvas = document.createElement('canvas');
+                                        // let ctx = canvas.getContext('2d');
+                                        // canvas.width = 64;
+                                        // canvas.height = 64;
+                                        // ctx!.drawImage(image, 0, 0, 64, 64);
+                                        // let lowres:string
+                                        // if (key == 'alphaMap' || m1.transparent && key == 'map') {
+                                        //     lowres = canvas.toDataURL('image/png')
+                                        // }
+                                        // else {
+                                        //     lowres = canvas.toDataURL('image/jpeg', 0.5)
+                                        // }
                                         Object.assign(m2[key], {
                                             url,
                                             width: image.width,
                                             height: image.height,
-                                            lowres,
+                                            // lowres,
                                             flipY: texture.flipY,
                                             wrapS: texture.wrapS,
                                             wrapT: texture.wrapT,
@@ -388,6 +416,9 @@ export class MeshComponent extends VioComponent
 
     update(delta: number): void {
         super.update(delta);
-        this._model?.mixer?.update(delta);
+        if (this._model?.mixer) {
+            this._model.mixer.update(delta);
+            this._model.object.updateMatrixWorld(true);
+        }
     }
 }
